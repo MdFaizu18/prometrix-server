@@ -1,0 +1,212 @@
+{
+  "info": {
+    "name": "PromptForge API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "BASE_URL", "value": "http://localhost:5000/api" },
+    { "key": "TOKEN", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{BASE_URL}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["const json = pm.response.json();", "pm.collectionVariables.set('TOKEN', json.data.token);"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{BASE_URL}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/auth/me",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prompts",
+      "item": [
+        {
+          "name": "Create Prompt",
+          "request": {
+            "method": "POST",
+            "url": "{{BASE_URL}}/prompts",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Build a REST API\",\n  \"description\": \"A prompt for generating REST API code\",\n  \"rawPrompt\": \"Create a REST API for a todo app with CRUD operations\",\n  \"toolMode\": \"cursor\",\n  \"techStack\": [\"Node.js\", \"Express\", \"MongoDB\"],\n  \"tone\": \"technical\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get All Prompts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/prompts?page=1&limit=10",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "toolMode", "value": "cursor", "disabled": true }
+              ]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        },
+        {
+          "name": "Get Prompt By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/prompts/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        },
+        {
+          "name": "Refine Prompt (Groq)",
+          "request": {
+            "method": "POST",
+            "url": "{{BASE_URL}}/prompts/:id/refine",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        },
+        {
+          "name": "Get Prompt Versions",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/prompts/:id/versions",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        },
+        {
+          "name": "Compare Versions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/prompts/:id/compare?versionA=1&versionB=2",
+              "query": [
+                { "key": "versionA", "value": "1" },
+                { "key": "versionB", "value": "2" }
+              ]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        },
+        {
+          "name": "Update Prompt",
+          "request": {
+            "method": "PATCH",
+            "url": "{{BASE_URL}}/prompts/:id",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\",\n  \"tone\": \"formal\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Prompt",
+          "request": {
+            "method": "DELETE",
+            "url": "{{BASE_URL}}/prompts/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Templates",
+      "item": [
+        {
+          "name": "Create Template",
+          "request": {
+            "method": "POST",
+            "url": "{{BASE_URL}}/templates",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{TOKEN}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"React Component Generator\",\n  \"category\": \"frontend\",\n  \"basePrompt\": \"Create a React component that {{description}}. Use TypeScript and Tailwind CSS.\",\n  \"toolMode\": \"v0\",\n  \"techStack\": [\"React\", \"TypeScript\", \"Tailwind\"],\n  \"isPublic\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Templates",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/templates/my",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        },
+        {
+          "name": "Get Public Templates",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/templates/public?category=frontend",
+              "query": [{ "key": "category", "value": "frontend" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get User Analytics",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/analytics",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        },
+        {
+          "name": "Get Prompt Analytics",
+          "request": {
+            "method": "GET",
+            "url": "{{BASE_URL}}/analytics/:promptId",
+            "header": [{ "key": "Authorization", "value": "Bearer {{TOKEN}}" }]
+          }
+        }
+      ]
+    }
+  ]
+}
