@@ -32,6 +32,11 @@ router.post('/', createTemplateValidation, validate, templateController.createTe
 router.get('/my', templateController.getMyTemplates);
 
 /**
+ * GET /api/templates/:id
+ */
+router.get('/:id', mongoIdParam('id'), validate, templateController.getTemplateById);
+
+/**
  * PATCH /api/templates/:id
  */
 router.patch('/:id', mongoIdParam('id'), ...updateTemplateValidation, validate, templateController.updateTemplate);

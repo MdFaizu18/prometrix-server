@@ -30,6 +30,11 @@ const buildSystemPrompt = (toolMode, techStack, tone) => {
 - Specific UI/UX requirements
 - Responsive design considerations
 `,
+    claude: `You are refining prompts for Claude AI. Focus on:
+- Clear and concise instructions
+- Specific expected outputs
+- Constraints and boundaries
+- Context and background information`,
     generic: `You are refining prompts for general AI use. Focus on:
 - Clarity of intent
 - Specific expected outputs

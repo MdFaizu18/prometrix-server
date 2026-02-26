@@ -5,12 +5,14 @@ import 'dotenv/config';
 import app from '../app.js';
 import connectDB from '../config/db.config.js';
 import config from '../config/env.config.js';
+import { verifyEmailConnection } from '../services/email.service.js';
 
 const startServer = async () => {
   await connectDB();
+  await verifyEmailConnection();
 
   const server = app.listen(config.port, () => {
-    console.log(`[Server] Prometrix running on port ${config.port} in ${config.env} mode`);
+    console.log(`[Server] PromptForge running on port ${config.port} in ${config.env} mode`);
   });
 
   // Graceful shutdown on SIGTERM/SIGINT (e.g. Docker stop, Ctrl+C)

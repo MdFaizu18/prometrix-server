@@ -29,10 +29,23 @@ const config = {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000,
     max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100,
   },
+
+  email: {
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT, 10) || 587,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+    from: process.env.EMAIL_FROM || 'PromptForge <noreply@promptforge.dev>',
+  },
+
+  resetPassword: {
+    // Token is valid for 15 minutes
+    expiresInMs: 15 * 60 * 1000,
+  },
 };
 
 // Validate required environment variables at startup
-const REQUIRED_VARS = ['JWT_SECRET', 'GROQ_API_KEY', 'MONGODB_URI'];
+const REQUIRED_VARS = ['JWT_SECRET', 'GROQ_API_KEY', 'MONGODB_URI', 'EMAIL_HOST', 'EMAIL_USER', 'EMAIL_PASS'];
 const missing = REQUIRED_VARS.filter((v) => !process.env[v]);
 if (missing.length > 0) {
   console.error(`[Config] Missing required env vars: ${missing.join(', ')}`);

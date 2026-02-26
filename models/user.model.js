@@ -31,6 +31,16 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    // Reset token is stored as a SHA-256 hash — never the raw token
+    // Raw token lives only in the email link; server only stores the hash
+    passwordResetToken: {
+      type: String,
+      select: false,
+    },
+    passwordResetExpiresAt: {
+      type: Date,
+      select: false,
+    },
   },
   { timestamps: true }
 );

@@ -12,6 +12,11 @@ export const getMyTemplates = asyncWrapper(async (req, res) => {
   sendSuccess(res, { data: templates });
 });
 
+export const getTemplateById = asyncWrapper(async (req, res) => {
+  const template = await templateService.getTemplateById(req.params.id, req.user._id);
+  sendSuccess(res, { data: template });
+});
+
 export const getPublicTemplates = asyncWrapper(async (req, res) => {
   const { category } = req.query;
   const templates = await templateService.getPublicTemplates({ category });

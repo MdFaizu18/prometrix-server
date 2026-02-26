@@ -4,6 +4,36 @@ import UsageAnalytics from '../models/usageAnalytics.model.js';
 import { refinePrompt as groqRefine } from './groq.service.js';
 import AppError from '../utils/AppError.util.js';
 
+// Simple heuristic scoring based on refined prompt content
+// Returns numbers in the 0–10 range for clarity, specificity, and overall.
+const computePromptScores = (refinedPrompt) => {
+  if (!refinedPrompt || typeof refinedPrompt !== 'string') {
+    return { clarity: null, specificity: null, overall: null };
+  }
+
+  const length = refinedPrompt.length;
+  const lines = refinedPrompt.split('\n');
+
+  const headingCount = lines.filter((l) => l.trim().startsWith('#')).length;
+  const bulletCount = lines.filter((l) => /^\s*[-*+]/.test(l) || /^\s*\d+\./.test(l)).length;
+
+  // Clarity: encourage moderately long, structured prompts
+  let clarity = 5;
+  if (length > 400) clarity += 2;
+  if (length > 800) clarity += 2;
+  if (headingCount > 0) clarity += 1;
+  clarity = Math.min(10, clarity);
+
+  // Specificity: more bullets / numbered steps => more specific
+  let specificity = 4 + Math.min(4, Math.floor(bulletCount / 2));
+  if (length > 600) specificity += 1;
+  specificity = Math.min(10, specificity);
+
+  const overall = Math.round((clarity + specificity) / 2);
+
+  return { clarity, specificity, overall };
+};
+
 // ─── Create ──────────────────────────────────────────────────────────────────
 
 export const createPrompt = async (userId, data) => {
@@ -100,6 +130,8 @@ export const refinePromptVersion = async (promptId, userId) => {
     throw error;
   }
 
+  const scores = computePromptScores(refinementResult.refinedPrompt);
+
   const version = await PromptVersion.create({
     promptId,
     versionNumber: nextVersion,
@@ -110,6 +142,11 @@ export const refinePromptVersion = async (promptId, userId) => {
       techStack: prompt.techStack,
       tone: prompt.tone,
       model: refinementResult.model,
+    },
+    score: {
+      clarity: scores.clarity,
+      specificity: scores.specificity,
+      overall: scores.overall,
     },
     feedbackStatus,
     createdBy: userId,

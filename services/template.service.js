@@ -10,6 +10,12 @@ export const getMyTemplates = async (userId) => {
   return Template.find({ createdBy: userId }).sort({ createdAt: -1 });
 };
 
+export const getTemplateById = async (templateId, userId) => {
+  const template = await Template.findOne({ _id: templateId, createdBy: userId });
+  if (!template) throw new AppError('Template not found', 404);
+  return template;
+};
+
 export const getPublicTemplates = async ({ category } = {}) => {
   const query = { isPublic: true };
   if (category) query.category = category;
