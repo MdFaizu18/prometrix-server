@@ -8,6 +8,7 @@ export const createPromptValidation = [
   body('rawPrompt').trim().notEmpty().withMessage('Raw prompt is required'),
   body('toolMode').optional().isIn(TOOL_MODES).withMessage(`toolMode must be one of: ${TOOL_MODES.join(', ')}`),
   body('tone').optional().isIn(TONES).withMessage(`tone must be one of: ${TONES.join(', ')}`),
+  body('model').optional().isString().trim(),
   body('techStack').optional().isArray().withMessage('techStack must be an array'),
   body('techStack.*').optional().isString().trim(),
   body('description').optional().trim().isLength({ max: 1000 }),
@@ -18,6 +19,7 @@ export const updatePromptValidation = [
   body('rawPrompt').optional().trim().notEmpty(),
   body('toolMode').optional().isIn(TOOL_MODES),
   body('tone').optional().isIn(TONES),
+  body('model').optional().isString().trim(),
   body('techStack').optional().isArray(),
   body('description').optional().trim().isLength({ max: 1000 }),
 ];

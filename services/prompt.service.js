@@ -88,7 +88,13 @@ export const refinePromptVersion = async (promptId, userId) => {
   let refinementResult;
 
   try {
-    refinementResult = await groqRefine(prompt.rawPrompt, prompt.toolMode, prompt.techStack, prompt.tone);
+    refinementResult = await groqRefine(
+      prompt.rawPrompt,
+      prompt.toolMode,
+      prompt.techStack,
+      prompt.tone,
+      prompt.model
+    );
   } catch (error) {
     feedbackStatus = 'failed';
     throw error;

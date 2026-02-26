@@ -3,8 +3,9 @@ import User from '../models/user.model.js';
 import config from '../config/env.config.js';
 import AppError from '../utils/AppError.util.js';
 import asyncWrapper from '../utils/asyncWrapper.util.js';
+import { isBlacklisted } from '../utils/tokenBlacklist.util.js';
 
-// Protect routes: verifies JWT and attaches user to req
+// Protect routes: verifies JWT, checks blacklist, and attaches user to req
 export const protect = asyncWrapper(async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -13,6 +14,11 @@ export const protect = asyncWrapper(async (req, res, next) => {
   }
 
   const token = authHeader.split(' ')[1];
+
+  // Reject tokens that were explicitly invalidated via logout
+  if (isBlacklisted(token)) {
+    throw new AppError('Token has been invalidated. Please log in again.', 401);
+  }
 
   let decoded;
   try {
@@ -26,6 +32,9 @@ export const protect = asyncWrapper(async (req, res, next) => {
     throw new AppError('User not found or deactivated', 401);
   }
 
+  // Attach decoded token to req so logout can read the exp claim without re-decoding
+  req.token = token;
+  req.tokenDecoded = decoded;
   req.user = user;
   next();
 });

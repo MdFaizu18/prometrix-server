@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, getMe } from '../controllers/auth.controller.js';
+import { register, login, logout, getMe } from '../controllers/auth.controller.js';
 import { registerValidation, loginValidation } from '../validations/auth.validation.js';
 import validate from '../middlewares/validate.middleware.js';
 import { protect } from '../middlewares/auth.middleware.js';
@@ -17,6 +17,13 @@ router.post('/register', registerValidation, validate, register);
  * Body: { email, password }
  */
 router.post('/login', loginValidation, validate, login);
+
+/**
+ * POST /api/auth/logout
+ * Header: Authorization: Bearer <token>
+ * Blacklists the current token — any further requests with it return 401.
+ */
+router.post('/logout', protect, logout);
 
 /**
  * GET /api/auth/me

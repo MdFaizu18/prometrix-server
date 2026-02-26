@@ -29,7 +29,7 @@ const buildSystemPrompt = (toolMode, techStack, tone) => {
 - Clear component structure and hierarchy
 - Specific UI/UX requirements
 - Responsive design considerations
-- Tailwind CSS class specificity`,
+`,
     generic: `You are refining prompts for general AI use. Focus on:
 - Clarity of intent
 - Specific expected outputs
@@ -63,14 +63,21 @@ Respond ONLY with the refined prompt text. Do not add explanations, preambles, o
  * @param {string} toolMode - 'cursor' | 'v0' | 'generic'
  * @param {string[]} techStack - Array of technologies
  * @param {string} tone - Desired tone of refinement
+ * @param {string} [modelOverride] - Optional model name to override the default
  * @returns {{ refinedPrompt: string, tokensUsed: number, model: string }}
  */
-export const refinePrompt = async (rawPrompt, toolMode = 'generic', techStack = [], tone = 'technical') => {
+export const refinePrompt = async (
+  rawPrompt,
+  toolMode = 'generic',
+  techStack = [],
+  tone = 'technical',
+  modelOverride
+) => {
   try {
     const systemPrompt = buildSystemPrompt(toolMode, techStack, tone);
 
     const completion = await groq.chat.completions.create({
-      model: config.groq.model,
+      model: modelOverride || config.groq.model,
       messages: [
         { role: 'system', content: systemPrompt },
         {

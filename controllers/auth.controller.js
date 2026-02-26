@@ -1,4 +1,4 @@
-import { registerUser, loginUser } from '../services/auth.service.js';
+import { registerUser, loginUser, logoutUser } from '../services/auth.service.js';
 import { sendSuccess } from '../utils/response.util.js';
 import asyncWrapper from '../utils/asyncWrapper.util.js';
 
@@ -12,6 +12,12 @@ export const login = asyncWrapper(async (req, res) => {
   const { email, password } = req.body;
   const result = await loginUser({ email, password });
   sendSuccess(res, { message: 'Login successful', data: result });
+});
+
+export const logout = asyncWrapper(async (req, res) => {
+  // req.token and req.tokenDecoded are set by the protect middleware
+  logoutUser(req.token, req.tokenDecoded);
+  sendSuccess(res, { message: 'Logged out successfully' });
 });
 
 export const getMe = asyncWrapper(async (req, res) => {

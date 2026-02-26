@@ -36,6 +36,10 @@ const promptSchema = new mongoose.Schema(
       enum: ['formal', 'casual', 'technical', 'creative', 'concise'],
       default: 'technical',
     },
+    model: {
+      type: String,
+      trim: true,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

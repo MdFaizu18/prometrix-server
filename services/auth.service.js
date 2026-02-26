@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import config from '../config/env.config.js';
 import AppError from '../utils/AppError.util.js';
+import { blacklistToken } from '../utils/tokenBlacklist.util.js';
 
 export const generateToken = (userId) => {
   return jwt.sign({ id: userId }, config.jwt.secret, {
@@ -38,4 +39,13 @@ export const loginUser = async ({ email, password }) => {
     token,
     user: { id: user._id, name: user.name, email: user.email, role: user.role },
   };
+};
+
+/**
+ * Logout — blacklists the current token so it can't be reused.
+ * The token stays invalid until its original expiry time, then it's
+ * automatically pruned from the in-memory store (or Redis TTL expires).
+ */
+export const logoutUser = (token, decoded) => {
+  blacklistToken(token, decoded.exp);
 };

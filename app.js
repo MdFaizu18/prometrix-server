@@ -14,6 +14,7 @@ import authRoutes from './routes/auth.routes.js';
 import promptRoutes from './routes/prompt.routes.js';
 import templateRoutes from './routes/template.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 const app = express();
 
@@ -67,6 +68,7 @@ app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/prompts', promptRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler for unknown routes
 app.use((req, res) => {
