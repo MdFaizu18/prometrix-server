@@ -44,12 +44,19 @@ const config = {
   },
 };
 
-// Validate required environment variables at startup
+// Validate required environment variables at startup (local/self-hosted).
+// In Vercel serverless, "startup" can also occur during build/bundling,
+// so we avoid hard-exiting the process there.
 const REQUIRED_VARS = ['JWT_SECRET', 'GROQ_API_KEY', 'MONGODB_URI', 'EMAIL_HOST', 'EMAIL_USER', 'EMAIL_PASS'];
 const missing = REQUIRED_VARS.filter((v) => !process.env[v]);
 if (missing.length > 0) {
-  console.error(`[Config] Missing required env vars: ${missing.join(', ')}`);
-  process.exit(1);
+  const msg = `[Config] Missing required env vars: ${missing.join(', ')}`;
+  if (process.env.VERCEL) {
+    console.warn(msg);
+  } else {
+    console.error(msg);
+    process.exit(1);
+  }
 }
 
 export default config;

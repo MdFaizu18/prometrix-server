@@ -1,0 +1,23 @@
+{
+    "version": 2,
+    "name": "prometrix-backend",
+    "builds": [
+        {
+            "src": "server/src/server.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "server/src/server.js"
+        },
+        {
+            "src": "/health",
+            "dest": "server/src/server.js"
+        }
+    ],
+    "env": {
+        "NODE_ENV": "production"
+    }
+}

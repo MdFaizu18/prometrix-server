@@ -7,6 +7,10 @@ import connectDB from '../config/db.config.js';
 import config from '../config/env.config.js';
 import { verifyEmailConnection } from '../services/email.service.js';
 
+// Vercel Serverless expects the module to export a handler (Express app works).
+// Local development / self-hosted Node should still start an HTTP listener.
+export default app;
+
 const startServer = async () => {
   await connectDB();
   await verifyEmailConnection();
@@ -40,4 +44,7 @@ const startServer = async () => {
   });
 };
 
-startServer();
+// Do not start a listener in Vercel's serverless runtime.
+if (!process.env.VERCEL) {
+  startServer();
+}

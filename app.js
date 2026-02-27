@@ -79,14 +79,18 @@ if (config.env !== "test") {
 // Ensures MongoDB connects before handling request
 // ─────────────────────────────────────────────
 
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+// On Vercel (serverless), we must ensure DB is connected per invocation.
+// Locally, `src/server.js` connects once at startup, so we avoid extra work here.
+if (process.env.VERCEL) {
+  app.use(async (req, res, next) => {
+    try {
+      await connectDB();
+      next();
+    } catch (error) {
+      next(error);
+    }
+  });
+}
 
 
 // ─────────────────────────────────────────────
