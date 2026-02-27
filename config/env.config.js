@@ -22,7 +22,17 @@ const config = {
   },
 
   cors: {
+    // Comma-separated list of allowed origins (recommended).
+    // Example:
+    // CORS_ORIGINS=http://localhost:3000,https://prometrix.vercel.app
+    origins: (process.env.CORS_ORIGINS || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
+    // Backward compatible single origin.
     clientUrl: process.env.CLIENT_URL || 'https://prometrix.vercel.app',
+    // Optional: allow any *.vercel.app preview deployments
+    allowVercelPreviews: process.env.CORS_ALLOW_VERCEL_PREVIEWS === 'true',
   },
 
   rateLimit: {

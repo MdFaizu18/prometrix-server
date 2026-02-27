@@ -29,10 +29,31 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: config.cors.clientUrl,
+    origin: (origin, callback) => {
+      // Allow non-browser requests (curl/postman) with no Origin header
+      if (!origin) return callback(null, true);
+
+      const baseAllowed = new Set(
+        [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          config.cors.clientUrl,
+          ...(config.cors.origins || []),
+        ].filter(Boolean)
+      );
+
+      const isAllowed =
+        baseAllowed.has(origin) ||
+        (config.cors.allowVercelPreviews === true &&
+          /^https:\/\/.*\.vercel\.app$/.test(origin));
+
+      if (isAllowed) return callback(null, true);
+      return callback(new Error(`CORS blocked origin: ${origin}`));
+    },
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
+    optionsSuccessStatus: 204,
   })
 );
 
