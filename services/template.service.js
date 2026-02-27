@@ -11,7 +11,11 @@ export const getMyTemplates = async (userId) => {
 };
 
 export const getTemplateById = async (templateId, userId) => {
-  const template = await Template.findOne({ _id: templateId, createdBy: userId });
+  const query = userId
+    ? { _id: templateId, $or: [{ createdBy: userId }, { isPublic: true }] }
+    : { _id: templateId, isPublic: true };
+
+  const template = await Template.findOne(query).populate('createdBy', 'name');
   if (!template) throw new AppError('Template not found', 404);
   return template;
 };
