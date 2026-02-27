@@ -22,7 +22,7 @@ const config = {
   },
 
   cors: {
-    clientUrl: process.env.CLIENT_URL || 'http://localhost:3000',
+    clientUrl: process.env.CLIENT_URL || 'https://prometrix.vercel.app',
   },
 
   rateLimit: {
