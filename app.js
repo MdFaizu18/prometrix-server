@@ -33,10 +33,15 @@ app.use(
       // Allow non-browser requests (curl/postman) with no Origin header
       if (!origin) return callback(null, true);
 
+      const DEFAULT_ALLOWED_ORIGINS = [
+        "https://prometrix.vercel.app",
+      ];
+
       const baseAllowed = new Set(
         [
           "http://localhost:3000",
           "http://127.0.0.1:3000",
+          ...DEFAULT_ALLOWED_ORIGINS,
           config.cors.clientUrl,
           ...(config.cors.origins || []),
         ].filter(Boolean)
@@ -47,8 +52,9 @@ app.use(
         (config.cors.allowVercelPreviews === true &&
           /^https:\/\/.*\.vercel\.app$/.test(origin));
 
-      if (isAllowed) return callback(null, true);
-      return callback(new Error(`CORS blocked origin: ${origin}`));
+      // IMPORTANT: don't throw here (it causes a 500 on OPTIONS preflight).
+      // Returning `false` simply omits CORS headers, and the browser will block it.
+      return callback(null, isAllowed);
     },
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
