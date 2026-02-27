@@ -1,29 +1,23 @@
-// MongoDB connection using Mongoose
-// Handles connection lifecycle and emits clear logs per environment
-import mongoose from 'mongoose';
-import config from './env.config.js';
+import mongoose from "mongoose";
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(config.mongodb.uri, {
-      // These are the recommended options for production stability
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGODB_URI, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
-
-    console.log(`[DB] MongoDB connected: ${conn.connection.host}`);
-
-    mongoose.connection.on('disconnected', () => {
-      console.warn('[DB] MongoDB disconnected');
-    });
-
-    mongoose.connection.on('reconnected', () => {
-      console.log('[DB] MongoDB reconnected');
-    });
-  } catch (error) {
-    console.error(`[DB] Connection failed: ${error.message}`);
-    process.exit(1);
   }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 };
 
 export default connectDB;
