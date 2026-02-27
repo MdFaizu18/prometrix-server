@@ -19,7 +19,7 @@ const templateSchema = new mongoose.Schema(
     },
     toolMode: {
       type: String,
-      enum: ['cursor', 'v0', 'generic'],
+      enum: ['cursor', 'v0', 'generic','claude'],
       default: 'generic',
     },
     techStack: {
