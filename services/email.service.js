@@ -96,7 +96,7 @@ export const sendPasswordResetEmail = async (toEmail, name, rawToken) => {
           </p>
         </div>
         <div class="footer">
-          &copy; ${new Date().getFullYear()} PromptForge. All rights reserved.
+          &copy; ${new Date().getFullYear()} Prometrix. All rights reserved.
         </div>
       </div>
     </body>
@@ -105,7 +105,7 @@ export const sendPasswordResetEmail = async (toEmail, name, rawToken) => {
 
   await sendEmail({
     to: toEmail,
-    subject: 'Reset your PromptForge password (expires in 15 minutes)',
+    subject: 'Reset your Prometrix password (expires in 15 minutes)',
     html,
   });
 };
